@@ -13,8 +13,11 @@ app = FastAPI(title="Stadium Companion — Prompt Wars Challenge 4")
 # real deployment.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_methods=["*"],
+    allow_origins=[
+        "https://stadium-companion-762488706590.europe-west1.run.app",
+        "http://localhost:8000",
+    ],
+    allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 

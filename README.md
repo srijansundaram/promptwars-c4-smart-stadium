@@ -200,7 +200,8 @@ data/
 └── stadium_state.json
 
 tests/
-└── test_decision_engine.py
+├── test_decision_engine.py
+└── test_main.py
 ```
 
 ## Setup & Run
@@ -216,16 +217,19 @@ Open http://localhost:8000 in your browser.
 ```bash
 pytest tests/ -v
 ```
-7 tests covering: accessibility exclusion, closed-gate exclusion, crowd
+10 tests covering: accessibility exclusion, closed-gate exclusion, crowd
 avoidance, restroom accessibility, queue-based food/transport selection,
-and unknown-input resilience.
+unknown-input resilience, and API endpoint validation (`/health`,
+`/ops/summary`, `/chat`).
 
 ## Security Notes
 - No API keys are hardcoded; `.env` is gitignored.
-- CORS is fully open (`*`) for local demo purposes only — this should be
-  restricted to specific origins before any production deployment.
+- CORS is restricted to the deployed Cloud Run origin and localhost —
+  wildcard origins are not used in production.
 - All external input (fan message, profile) is validated via Pydantic models.
 - Frontend escapes all user-provided text before rendering (XSS prevention).
+- Container image is scanned for vulnerabilities via Google Cloud's
+  Container Scanning API.
 
 ## Limitations / Future Work
 
