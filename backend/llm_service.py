@@ -16,7 +16,8 @@ _INTENT_KEYWORDS = {
 }
 
 
-def _get_client():
+def _get_client() -> "OpenAI":
+    """Returns an OpenAI-SDK-compatible client pointed at Groq's endpoint."""
     from openai import OpenAI
     return OpenAI(base_url="https://api.groq.com/openai/v1", api_key=GROQ_API_KEY)
 
