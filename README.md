@@ -1,12 +1,104 @@
-# Stadium Companion — Prompt Wars Challenge 4: Smart Stadiums & Tournament Operations
+# Stadium Companion
 
-## Vertical
-A GenAI-enabled assistant for **fans navigating a FIFA World Cup 2026 stadium**,
-with a specific focus on fans who are non-native English speakers and/or have
-an accessibility need (wheelchair, mobility impairment, visual impairment).
+### Prompt Wars Challenge 4 – Smart Stadiums & Tournament Operations
 
-**🔗 Live demo:** https://stadium-companion.onrender.com
-> Note: hosted on Render's free tier, which sleeps after ~15 min of inactivity. First request after idle may take 20–30 seconds to wake up — this is expected, not a bug.
+Building an AI-powered companion that enhances fan experience and supports real-time stadium operations during the FIFA World Cup 2026.
+
+> A GenAI-powered smart stadium assistant that helps fans navigate complex venues through multilingual assistance, accessibility-aware routing, crowd-aware recommendations, and operational intelligence. The solution combines deterministic decision logic with LLM-powered natural language understanding to deliver explainable, context-aware recommendations for a safer and more inclusive stadium experience.
+
+## Live Demo
+
+**Cloud Run:** https://stadium-companion-762488706590.europe-west1.run.app
+> Supports multilingual fan assistance, accessibility-aware routing, crowd-aware recommendations, and operational insights for tournament venues.
+
+## Tech Stack
+
+- Python 3.11
+- FastAPI
+- Groq API (Llama 3.3)
+- Docker
+- Google Cloud Run
+- HTML/CSS/JavaScript
+- Pydantic
+- Pytest
+
+## Features
+
+- 🏟️ Context-aware stadium assistant
+- ♿ Accessibility-aware routing for wheelchair and mobility-impaired fans
+- 🚪 Crowd-aware exit recommendations
+- 🚻 Queue-aware restroom recommendations
+- 🍔 Food stall recommendations based on wait time and proximity
+- 🚇 Transport recommendations using congestion and departure times
+- 🌍 Automatic language detection with multilingual responses
+- 🤖 Natural language interaction powered by Groq LLM
+- 📊 Operational summary endpoint for venue staff
+- ✅ Deterministic recommendation engine for transparent decision making
+
+## Architecture
+
+```text
+                        Browser (Frontend)
+                               │
+                               ▼
+                    FastAPI Backend (API)
+                               │
+              ┌────────────────┴────────────────┐
+              │                                 │
+              ▼                                 ▼
+   Decision Engine (Deterministic)      Groq LLM
+   • Accessibility Rules                • Intent Detection
+   • Crowd Optimization                 • Language Detection
+   • Queue Optimization                 • Multilingual Replies
+              │                                 │
+              └────────────────┬────────────────┘
+                               ▼
+                Context-Aware Stadium Recommendation
+```
+
+## AI Usage
+
+The application intentionally separates AI from operational decision making.
+
+### LLM Responsibilities
+
+- Detect user intent
+- Detect message language
+- Generate multilingual natural-language responses
+
+### Deterministic Decision Engine
+
+All recommendations are produced using transparent business rules based on:
+
+- Fan seat zone
+- Accessibility requirements
+- Crowd density
+- Queue lengths
+- Gate availability
+- Transport status
+
+This separation makes recommendations explainable, reproducible, and suitable for safety-critical environments such as large sporting events.
+
+## Workflow
+
+```text
+Fan Question
+      │
+      ▼
+Intent + Language Detection (Groq)
+      │
+      ▼
+Load Stadium State
+      │
+      ▼
+Deterministic Decision Engine
+      │
+      ▼
+Recommendation + Reasoning
+      │
+      ▼
+Multilingual Response
+```
 
 ## Approach & Logic
 Rather than covering every operational area shallowly, this solution focuses
@@ -46,6 +138,14 @@ The system is split into two deliberately separate layers:
    (semantic form/landmarks, visible focus states, `aria-live` regions)
    and a visible error state if the backend is unreachable.
 
+## API Endpoints
+
+| Endpoint | Method | Purpose |
+|----------|--------|---------|
+| `/health` | GET | Health check |
+| `/chat` | POST | Generates personalized fan recommendations |
+| `/ops/summary` | GET | Operational overview for venue staff |
+
 ## Screenshots
 
 **Exit routing — accessibility-aware context switching:**
@@ -83,12 +183,31 @@ no silent hang.
   attempting to also cover volunteer/organizer/venue-staff workflows, to
   keep the logic deep and well-tested rather than broad and shallow.
 
+## Project Structure
+
+```text
+backend/
+├── decision_engine.py
+├── llm_service.py
+├── stadium_data.py
+├── models.py
+└── main.py
+
+frontend/
+└── index.html
+
+data/
+└── stadium_state.json
+
+tests/
+└── test_decision_engine.py
+```
+
 ## Setup & Run
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env   # optional: add your free GROQ_API_KEY
 uvicorn backend.main:app --reload
 ```
 Open http://localhost:8000 in your browser.
@@ -109,7 +228,10 @@ and unknown-input resilience.
 - Frontend escapes all user-provided text before rendering (XSS prevention).
 
 ## Limitations / Future Work
-- Real-time stadium data integration (replacing the mock JSON).
-- Persisting chat history per fan session.
-- Voice input for accessibility (visually impaired fans).
-- Extending to volunteer/organizer operational-intelligence dashboards.
+
+- Integrate live IoT crowd and transport feeds.
+- Indoor GPS navigation for turn-by-turn guidance.
+- Voice interaction for hands-free accessibility.
+- Personalized notifications during the event.
+- Predictive crowd congestion analytics.
+- Expanded operational dashboards for volunteers and venue staff.
