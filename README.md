@@ -5,6 +5,9 @@ A GenAI-enabled assistant for **fans navigating a FIFA World Cup 2026 stadium**,
 with a specific focus on fans who are non-native English speakers and/or have
 an accessibility need (wheelchair, mobility impairment, visual impairment).
 
+**🔗 Live demo:** https://stadium-companion.onrender.com
+> Note: hosted on Render's free tier, which sleeps after ~15 min of inactivity. First request after idle may take 20–30 seconds to wake up — this is expected, not a bug.
+
 ## Approach & Logic
 Rather than covering every operational area shallowly, this solution focuses
 on one high-value, well-defined slice: **context-aware, multilingual,
