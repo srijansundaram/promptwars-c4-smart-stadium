@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stadium Companion</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 640px; margin: 40px auto; background: #0e1116; color: #eee; padding: 0 16px; }
+  h1 { font-size: 1.4rem; }
+  .panel { background: #171b22; padding: 16px; border-radius: 10px; margin-bottom: 16px; }
+  label { display: block; font-size: 0.85rem; margin-top: 8px; color: #ccc; }
+  select, input, button {
+    width: 100%; padding: 10px; margin-top: 4px; border-radius: 6px;
+    border: 1px solid #444; background: #0e1116; color: #eee; box-sizing: border-box;
+    font-size: 1rem;
+  }
+  select:focus, input:focus, button:focus {
+    outline: 3px solid #60a5fa; outline-offset: 2px;
+  }
+  button { background: #2563eb; border: none; cursor: pointer; margin-top: 12px; font-weight: 600; }
+  button:disabled { background: #444; cursor: not-allowed; }
+  #chatLog { margin-top: 16px; }
+  .msg { padding: 10px; border-radius: 8px; margin-bottom: 8px; }
+  .user { background: #1f2937; }
+  .bot { background: #14532d; }
+  .error { background: #7f1d1d; }
+  .reasoning { font-size: 0.8rem; color: #d1d5db; margin-top: 4px; }
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap;
+  }
+  #status { font-size: 0.85rem; color: #9ca3af; min-height: 1.2em; margin-top: 8px; }
+</style>
+</head>
+<body>
+  <main>
+    <h1>🏟️ Stadium Companion — FIFA World Cup 2026</h1>
+
+    <form class="panel" id="chatForm" aria-label="Ask the stadium assistant">
+      <label for="zone">Seat zone</label>
+      <select id="zone" name="zone">
+        <option>Zone 1</option><option>Zone 2</option><option>Zone 3</option><option>Zone 4</option>
+      </select>
+
+      <label for="mobility">Mobility need</label>
+      <select id="mobility" name="mobility">
+        <option value="none">None</option>
+        <option value="wheelchair">Wheelchair</option>
+        <option value="mobility_impaired">Mobility impaired</option>
+        <option value="visually_impaired">Visually impaired</option>
+      </select>
+
+      <label for="message">Ask me anything (any language)</label>
+      <input id="message" name="message" placeholder="e.g. ¿Dónde está el baño más cercano?"
+             aria-describedby="status" autocomplete="off" />
+
+      <button type="submit" id="sendBtn">Send</button>
+      <div id="status" role="status" aria-live="polite"></div>
+    </form>
+
+    <section id="chatLog" aria-label="Conversation history" aria-live="polite"></section>
+  </main>
+
+<script>
+const form = document.getElementById('chatForm');
+const sendBtn = document.getElementById('sendBtn');
+const statusEl = document.getElementById('status');
+const log = document.getElementById('chatLog');
+
+form.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const messageInput = document.getElementById('message');
+  const message = messageInput.value.trim();
+  if (!message) {
+    statusEl.textContent = 'Please type a question first.';
+    return;
+  }
+
+  const profile = {
+    seat_zone: document.getElementById('zone').value,
+    mobility_need: document.getElementById('mobility').value,
+  };
+
+  appendMessage('user', 'You', message);
+  messageInput.value = '';
+  sendBtn.disabled = true;
+  statusEl.textContent = 'Thinking…';
+
+  try {
+    const res = await fetch('/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ message, profile }),
+      signal: AbortSignal.timeout(15000),
+    });
+
+    if (!res.ok) {
+      throw new Error(`Server responded with ${res.status}`);
+    }
+
+    const data = await res.json();
+    appendMessage('bot', 'Assistant', data.reply,
+      `intent: ${data.detected_intent} · language: ${data.detected_language}`);
+    statusEl.textContent = '';
+  } catch (err) {
+    const reason = err.name === 'TimeoutError'
+      ? 'The request took too long — please try again.'
+      : 'Something went wrong reaching the assistant. Please try again.';
+    appendMessage('error', 'Error', reason);
+    statusEl.textContent = 'There was a problem. See message above.';
+  } finally {
+    sendBtn.disabled = false;
+    messageInput.focus();
+  }
+});
+
+function appendMessage(cls, who, text, meta) {
+  const div = document.createElement('div');
+  div.className = `msg ${cls}`;
+  div.innerHTML = `<b>${who}:</b> ${escapeHtml(text)}` +
+    (meta ? `<div class="reasoning">${escapeHtml(meta)}</div>` : '');
+  log.appendChild(div);
+  div.scrollIntoView({ behavior: 'smooth', block: 'end' });
+}
+
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+</script>
+</body>
+</html>

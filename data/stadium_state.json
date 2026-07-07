@@ -1,0 +1,34 @@
+{
+    "gates": {
+      "Gate A": {"crowd_level": "low", "accessible": true, "status": "open"},
+      "Gate B": {"crowd_level": "critical", "accessible": true, "status": "open"},
+      "Gate C": {"crowd_level": "low", "accessible": false, "status": "open"},
+      "Gate D": {"crowd_level": "high", "accessible": true, "status": "closed"},
+      "Gate E": {"crowd_level": "low", "accessible": true, "status": "open"}
+    },
+    "seat_zone_gate_distance_minutes": {
+      "Zone 1": {"Gate A": 3, "Gate B": 5, "Gate C": 2, "Gate D": 4, "Gate E": 8},
+      "Zone 2": {"Gate A": 6, "Gate B": 2, "Gate C": 5, "Gate D": 3, "Gate E": 7},
+      "Zone 3": {"Gate A": 8, "Gate B": 6, "Gate C": 1, "Gate D": 2, "Gate E": 3},
+      "Zone 4": {"Gate A": 4, "Gate B": 4, "Gate C": 3, "Gate D": 6, "Gate E": 2}
+    },
+    "amenities": {
+      "restrooms": [
+        {"id": "R1", "zone": "Zone 1", "accessible": true,  "queue": "short"},
+        {"id": "R2", "zone": "Zone 1", "accessible": false, "queue": "long"},
+        {"id": "R3", "zone": "Zone 2", "accessible": true,  "queue": "medium"},
+        {"id": "R4", "zone": "Zone 3", "accessible": true,  "queue": "short"},
+        {"id": "R5", "zone": "Zone 4", "accessible": false, "queue": "short"}
+      ],
+      "food_stalls": [
+        {"id": "F1", "zone": "Zone 1", "name": "Global Grill",   "queue": "long"},
+        {"id": "F2", "zone": "Zone 2", "name": "Fan Fare Snacks", "queue": "short"},
+        {"id": "F3", "zone": "Zone 3", "name": "World Cup Diner", "queue": "medium"},
+        {"id": "F4", "zone": "Zone 4", "name": "QuickBite",       "queue": "short"}
+      ]
+    },
+    "transport": {
+      "metro":   {"crowd_level": "medium", "next_departure_minutes": 6},
+      "shuttle": {"crowd_level": "low",    "next_departure_minutes": 12}
+    }
+  }
